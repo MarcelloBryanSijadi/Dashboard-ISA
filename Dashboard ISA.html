@@ -1,0 +1,1731 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Audit Sistem Informasi - Dukcapil Minahasa Utara</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;600&display=swap"
+      rel="stylesheet"
+    />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+    <style>
+      :root {
+        --navy: #0a2342;
+        --navy-mid: #103460;
+        --navy-light: #1a4a7a;
+        --gold: #3b9edd;
+        --gold-light: #72c0f0;
+        --gold-dim: #1e6fa8;
+        --cream: #f0f6fc;
+        --white: #ffffff;
+        --critical: #c0392b;
+        --high: #e67e22;
+        --moderate: #f1c40f;
+        --low: #27ae60;
+        --text-main: #0a2342;
+        --text-muted: #4a6080;
+        --border: #c8dff0;
+        --card-bg: #ffffff;
+        --sidebar-w: 260px;
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "DM Sans", sans-serif;
+        background: var(--cream);
+        color: var(--text-main);
+        display: flex;
+        min-height: 100vh;
+        overflow-x: hidden;
+      }
+
+      /* ── SIDEBAR ── */
+      .sidebar {
+        width: var(--sidebar-w);
+        min-height: 100vh;
+        background: var(--navy);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 36px 20px 24px;
+        position: fixed;
+        top: 0;
+        left: 0;
+        z-index: 100;
+        border-right: 1px solid rgba(201, 168, 76, 0.15);
+      }
+
+      .sidebar-logo {
+        font-size: 42px;
+        margin-bottom: 10px;
+        filter: drop-shadow(0 0 12px rgba(201, 168, 76, 0.4));
+      }
+
+      .sidebar-title {
+        font-family: "Playfair Display", serif;
+        color: var(--white);
+        font-size: 15px;
+        font-weight: 700;
+        text-align: center;
+        letter-spacing: 1.5px;
+        text-transform: uppercase;
+        line-height: 1.4;
+        margin-bottom: 4px;
+      }
+
+      .sidebar-subtitle {
+        font-family: "JetBrains Mono", monospace;
+        color: var(--gold);
+        font-size: 9px;
+        letter-spacing: 1px;
+        text-align: center;
+        margin-bottom: 32px;
+        opacity: 0.85;
+      }
+
+      .sidebar-divider {
+        width: 60%;
+        height: 1px;
+        background: linear-gradient(
+          90deg,
+          transparent,
+          var(--gold-dim),
+          transparent
+        );
+        margin-bottom: 32px;
+      }
+
+      .nav-item {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 12px 18px;
+        border-radius: 10px;
+        cursor: pointer;
+        transition: all 0.25s ease;
+        color: rgba(255, 255, 255, 0.55);
+        font-size: 14px;
+        font-weight: 500;
+        margin-bottom: 6px;
+        border: 1px solid transparent;
+      }
+
+      .nav-item:hover {
+        background: rgba(201, 168, 76, 0.1);
+        color: var(--gold-light);
+        border-color: rgba(201, 168, 76, 0.2);
+      }
+
+      .nav-item.active {
+        background: rgba(201, 168, 76, 0.15);
+        color: var(--gold);
+        border-color: rgba(201, 168, 76, 0.3);
+        font-weight: 600;
+      }
+
+      .nav-icon {
+        font-size: 16px;
+        min-width: 20px;
+      }
+
+      .sidebar-footer {
+        margin-top: auto;
+        text-align: center;
+      }
+
+      .sidebar-footer .label {
+        color: rgba(255, 255, 255, 0.35);
+        font-size: 10px;
+        letter-spacing: 1.5px;
+        text-transform: uppercase;
+        margin-bottom: 4px;
+      }
+
+      .sidebar-footer .group {
+        color: var(--gold);
+        font-family: "Playfair Display", serif;
+        font-size: 15px;
+        font-weight: 700;
+      }
+
+      /* ── MAIN ── */
+      .main {
+        margin-left: var(--sidebar-w);
+        flex: 1;
+        min-height: 100vh;
+        background: var(--cream);
+        background-image: radial-gradient(
+            ellipse at 80% 10%,
+            rgba(59, 158, 221, 0.08) 0%,
+            transparent 50%
+          ),
+          radial-gradient(
+            ellipse at 20% 90%,
+            rgba(10, 35, 66, 0.05) 0%,
+            transparent 50%
+          );
+      }
+
+      .page {
+        display: none;
+        padding: 48px 52px;
+        animation: fadeIn 0.4s ease;
+      }
+      .page.active {
+        display: block;
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(12px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      /* ── PAGE TITLE ── */
+      .page-title {
+        font-family: "Playfair Display", serif;
+        font-size: 32px;
+        font-weight: 900;
+        color: var(--text-main);
+        margin-bottom: 36px;
+        letter-spacing: -0.5px;
+        position: relative;
+        padding-bottom: 16px;
+      }
+
+      .page-title::after {
+        content: "";
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 60px;
+        height: 3px;
+        background: linear-gradient(90deg, #1e6fa8, #72c0f0);
+        border-radius: 2px;
+      }
+
+      /* ── CARDS ── */
+      .grid-2 {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 24px;
+        margin-bottom: 28px;
+      }
+      .grid-3 {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 20px;
+        margin-bottom: 28px;
+      }
+
+      .card {
+        background: var(--card-bg);
+        border-radius: 16px;
+        padding: 28px 30px;
+        border: 1px solid var(--border);
+        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
+        transition: box-shadow 0.2s ease;
+      }
+
+      .card:hover {
+        box-shadow: 0 6px 24px rgba(0, 0, 0, 0.09);
+      }
+
+      .card-header {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 16px;
+        font-family: "Playfair Display", serif;
+        font-size: 17px;
+        font-weight: 700;
+        color: var(--text-main);
+      }
+
+      .card-icon {
+        font-size: 18px;
+      }
+
+      .card-body {
+        font-size: 14px;
+        color: var(--text-muted);
+        line-height: 1.75;
+      }
+
+      /* ── TUJUAN LIST ── */
+      .tujuan-list {
+        list-style: none;
+        counter-reset: item;
+      }
+
+      .tujuan-list li {
+        counter-increment: item;
+        display: flex;
+        align-items: flex-start;
+        gap: 12px;
+        margin-bottom: 14px;
+        font-size: 13.5px;
+        color: #374151;
+        line-height: 1.6;
+      }
+
+      .tujuan-list li::before {
+        content: counter(item);
+        min-width: 24px;
+        height: 24px;
+        background: var(--gold);
+        color: white;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 11px;
+        font-weight: 700;
+        flex-shrink: 0;
+        margin-top: 1px;
+      }
+
+      /* ── KEKUATAN/KELEMAHAN ── */
+      .swot-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 16px;
+        margin-top: 8px;
+      }
+
+      .swot-box {
+        border-radius: 10px;
+        padding: 16px 18px;
+      }
+
+      .swot-box.strength {
+        background: #f0fdf4;
+        border: 1px solid #bbf7d0;
+      }
+      .swot-box.weakness {
+        background: #fff7ed;
+        border: 1px solid #fed7aa;
+      }
+
+      .swot-title {
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: 1.5px;
+        text-transform: uppercase;
+        margin-bottom: 10px;
+      }
+
+      .swot-box.strength .swot-title {
+        color: #16a34a;
+      }
+      .swot-box.weakness .swot-title {
+        color: #ea580c;
+      }
+
+      .swot-item {
+        display: flex;
+        gap: 8px;
+        align-items: flex-start;
+        font-size: 12.5px;
+        color: #374151;
+        margin-bottom: 6px;
+        line-height: 1.5;
+      }
+
+      .swot-dot {
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        margin-top: 5px;
+        flex-shrink: 0;
+      }
+
+      .strength .swot-dot {
+        background: #22c55e;
+      }
+      .weakness .swot-dot {
+        background: #f97316;
+      }
+
+      /* ── STAT CARDS ── */
+      .stat-card {
+        background: var(--navy);
+        border-radius: 14px;
+        padding: 22px 24px;
+        color: white;
+        text-align: center;
+        border: 1px solid rgba(201, 168, 76, 0.15);
+      }
+
+      .stat-number {
+        font-family: "Playfair Display", serif;
+        font-size: 40px;
+        font-weight: 900;
+        color: var(--gold);
+        line-height: 1;
+        margin-bottom: 4px;
+      }
+
+      .stat-label {
+        font-size: 12px;
+        color: rgba(255, 255, 255, 0.6);
+        letter-spacing: 0.5px;
+      }
+
+      /* ── BADGE ── */
+      .badge {
+        display: inline-flex;
+        align-items: center;
+        padding: 4px 12px;
+        border-radius: 999px;
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: 0.5px;
+        text-transform: uppercase;
+      }
+
+      .badge-critical {
+        background: #fee2e2;
+        color: var(--critical);
+        border: 1px solid #fca5a5;
+      }
+      .badge-high {
+        background: #fef3c7;
+        color: #b45309;
+        border: 1px solid #fcd34d;
+      }
+      .badge-moderate {
+        background: #fffbeb;
+        color: #92400e;
+        border: 1px solid #fde68a;
+      }
+      .badge-low {
+        background: #dcfce7;
+        color: #15803d;
+        border: 1px solid #86efac;
+      }
+
+      /* ── TABLE ── */
+      .table-wrapper {
+        overflow-x: auto;
+        border-radius: 12px;
+        border: 1px solid var(--border);
+        margin-top: 8px;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 13px;
+      }
+
+      thead {
+        background: var(--navy);
+      }
+
+      thead th {
+        color: rgba(255, 255, 255, 0.75);
+        font-size: 10px;
+        letter-spacing: 1.5px;
+        text-transform: uppercase;
+        padding: 14px 16px;
+        text-align: left;
+        font-weight: 600;
+      }
+
+      tbody tr {
+        border-bottom: 1px solid var(--border);
+        transition: background 0.15s;
+      }
+      tbody tr:last-child {
+        border-bottom: none;
+      }
+      tbody tr:hover {
+        background: rgba(201, 168, 76, 0.04);
+      }
+
+      tbody td {
+        padding: 13px 16px;
+        color: #374151;
+        vertical-align: middle;
+      }
+
+      .risk-id {
+        font-family: "JetBrains Mono", monospace;
+        font-weight: 600;
+        color: var(--navy);
+        font-size: 12px;
+      }
+
+      /* ── CHART SECTION ── */
+      .chart-container {
+        position: relative;
+        height: 260px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      /* ── ANNEX TABLE ── */
+      .annex-table {
+        font-size: 12.5px;
+      }
+      .annex-table td:last-child {
+        color: var(--critical);
+        font-style: italic;
+        font-size: 12px;
+      }
+      .annex-ok {
+        color: #16a34a !important;
+        font-style: normal !important;
+      }
+
+      /* ── REKOMENDASI CARDS ── */
+      .rekom-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 18px;
+        margin-top: 8px;
+      }
+
+      .rekom-card {
+        border-radius: 12px;
+        padding: 20px 22px;
+        background: white;
+        border: 1px solid var(--border);
+        position: relative;
+        overflow: hidden;
+      }
+
+      .rekom-card::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 4px;
+        height: 100%;
+      }
+
+      .rekom-card.critical::before {
+        background: var(--critical);
+      }
+      .rekom-card.high::before {
+        background: var(--high);
+      }
+      .rekom-card.moderate::before {
+        background: var(--moderate);
+      }
+      .rekom-card.low::before {
+        background: var(--low);
+      }
+
+      .rekom-id {
+        font-family: "JetBrains Mono", monospace;
+        font-size: 10px;
+        font-weight: 600;
+        letter-spacing: 1px;
+        margin-bottom: 6px;
+      }
+
+      .rekom-card.critical .rekom-id {
+        color: var(--critical);
+      }
+      .rekom-card.high .rekom-id {
+        color: var(--high);
+      }
+      .rekom-card.moderate .rekom-id {
+        color: #92400e;
+      }
+
+      .rekom-masalah {
+        font-family: "Playfair Display", serif;
+        font-size: 16px;
+        font-weight: 700;
+        color: var(--text-main);
+        margin-bottom: 10px;
+        line-height: 1.3;
+      }
+
+      .rekom-label {
+        font-size: 10px;
+        color: var(--text-muted);
+        letter-spacing: 1px;
+        text-transform: uppercase;
+        margin-bottom: 4px;
+      }
+
+      .rekom-text {
+        font-size: 12.5px;
+        color: var(--gold-dim);
+        font-weight: 600;
+        line-height: 1.5;
+      }
+
+      /* ── GAP TABLE ── */
+      .gap-badge {
+        background: #f1f5f9;
+        color: #475569;
+        font-size: 11px;
+        padding: 3px 8px;
+        border-radius: 4px;
+        font-family: "JetBrains Mono", monospace;
+      }
+
+      /* ── OVERALL SCORE ── */
+      .score-grid {
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        gap: 14px;
+        margin-top: 16px;
+      }
+
+      .score-item {
+        background: white;
+        border-radius: 12px;
+        padding: 16px 12px;
+        text-align: center;
+        border: 1px solid var(--border);
+      }
+
+      .score-val {
+        font-family: "Playfair Display", serif;
+        font-size: 28px;
+        font-weight: 900;
+        line-height: 1;
+        margin-bottom: 4px;
+      }
+
+      .score-val.s3 {
+        color: #f59e0b;
+      }
+      .score-val.s2 {
+        color: var(--critical);
+      }
+
+      .score-domain {
+        font-size: 10px;
+        color: var(--text-muted);
+        line-height: 1.4;
+        margin-top: 2px;
+      }
+
+      .progress-bar-wrap {
+        background: #f3f4f6;
+        border-radius: 99px;
+        height: 6px;
+        margin-top: 8px;
+        overflow: hidden;
+      }
+      .progress-bar {
+        height: 100%;
+        border-radius: 99px;
+      }
+      .pb-3 {
+        width: 60%;
+        background: linear-gradient(90deg, #1e6fa8, #72c0f0);
+      }
+      .pb-2 {
+        width: 40%;
+        background: linear-gradient(90deg, var(--critical), #ef4444);
+      }
+    </style>
+  </head>
+  <body>
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+      <div class="sidebar-logo">🏛️</div>
+      <div class="sidebar-title">Dukcapil<br />Minahasa Utara</div>
+      <div class="sidebar-subtitle">AUDIT SI · ITIL V4 · 2026</div>
+      <div class="sidebar-divider"></div>
+
+      <nav style="width: 100%">
+        <div class="nav-item active" onclick="showPage('dashboard', this)">
+          <span class="nav-icon">ℹ️</span> Dashboard
+        </div>
+        <div class="nav-item" onclick="showPage('risk', this)">
+          <span class="nav-icon">⚠️</span> Risk Analysis
+        </div>
+        <div class="nav-item" onclick="showPage('rekomendasi', this)">
+          <span class="nav-icon">📋</span> Rekomendasi
+        </div>
+        <div class="nav-item" onclick="showPage('assessment', this)">
+          <span class="nav-icon">📊</span> Overall Assessment
+        </div>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="label">Auditor</div>
+        <div class="group">Kelompok ISA</div>
+      </div>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="main">
+      <!-- ══ PAGE: DASHBOARD ══ -->
+      <section class="page active" id="page-dashboard">
+        <h1 class="page-title">Ringkasan Audit & Strategi Keamanan</h1>
+
+        <div class="grid-2">
+          <!-- Latar Belakang -->
+          <div class="card" style="grid-column: 1">
+            <div class="card-header">
+              <span class="card-icon">📄</span> Latar Belakang
+            </div>
+            <div class="card-body">
+              Di era transformasi digital, tata kelola teknologi informasi (TI)
+              menjadi pilar utama efektivitas layanan publik. Dukcapil Minahasa
+              Utara mengoperasikan Sistem Informasi Administrasi Kependudukan
+              (<strong>SIAK</strong>) yang terpusat dan aplikasi mandiri
+              <strong>SIGAP</strong> untuk layanan online. Namun, ditemukan
+              risiko kritis berupa ketergantungan tinggi pada jaringan internet,
+              <em>human error</em> dalam penginputan data, dan pembatasan hak
+              akses yang menyebabkan ketergantungan pada operator tertentu.
+              Audit menggunakan framework <strong>ITIL V4</strong> dilakukan
+              untuk mengevaluasi dan memitigasi risiko-risiko tersebut.
+            </div>
+          </div>
+
+          <!-- Tujuan Penelitian -->
+          <div class="card">
+            <div class="card-header">
+              <span class="card-icon">🎯</span> Tujuan Penelitian
+            </div>
+            <ol class="tujuan-list">
+              <li>
+                Mengevaluasi keamanan data pribadi penduduk dari akses tidak sah
+                menggunakan framework ITIL V4.
+              </li>
+              <li>
+                Menilai tingkat ketersediaan (<em>availability</em>)
+                infrastruktur jaringan dalam mendukung pelayanan.
+              </li>
+              <li>
+                Menjamin akurasi informasi kependudukan melalui penguatan
+                kontrol validasi sistem.
+              </li>
+              <li>
+                Mengukur efisiensi sistem SIAK dan SIGAP dalam mempercepat
+                proses pelayanan publik.
+              </li>
+            </ol>
+          </div>
+        </div>
+
+        <!-- Stat Cards -->
+        <div
+          class="grid-3"
+          style="grid-template-columns: repeat(5, 1fr); margin-bottom: 28px"
+        >
+          <div class="stat-card">
+            <div class="stat-number">10</div>
+            <div class="stat-label">Total Risiko Teridentifikasi</div>
+          </div>
+          <div class="stat-card" style="border-color: rgba(192, 57, 43, 0.4)">
+            <div class="stat-number" style="color: #ef4444">3</div>
+            <div class="stat-label">Risiko Critical</div>
+          </div>
+          <div class="stat-card" style="border-color: rgba(230, 126, 22, 0.4)">
+            <div class="stat-number" style="color: #f97316">4</div>
+            <div class="stat-label">Risiko High</div>
+          </div>
+          <div class="stat-card" style="border-color: rgba(241, 196, 15, 0.4)">
+            <div class="stat-number" style="color: #eab308">3</div>
+            <div class="stat-label">Risiko Moderate</div>
+          </div>
+          <div class="stat-card" style="border-color: rgba(39, 174, 96, 0.4)">
+            <div class="stat-number" style="color: #22c55e">5</div>
+            <div class="stat-label">Domain ITIL V4 Diaudit</div>
+          </div>
+        </div>
+
+        <!-- Kondisi Sistem SIAK & SIGAP -->
+        <div class="card" style="margin-bottom: 28px">
+          <div class="card-header">
+            <span class="card-icon">⚡</span> Analisis Kondisi Sistem SIAK &
+            SIGAP (Kekuatan & Kelemahan)
+          </div>
+          <div class="swot-grid">
+            <div class="swot-box strength">
+              <div class="swot-title">✅ Kekuatan</div>
+              <div class="swot-item">
+                <div class="swot-dot"></div>
+                SIAK mendukung seluruh 20 layanan utama kependudukan (KK, KTP,
+                Akta)
+              </div>
+              <div class="swot-item">
+                <div class="swot-dot"></div>
+                Hak akses dibatasi melalui SK Kepala Dinas — kesadaran keamanan
+                data baik
+              </div>
+              <div class="swot-item">
+                <div class="swot-dot"></div>
+                Infrastruktur jaringan ditingkatkan dari 1 menjadi 2 provider
+                (Telkom Fiber)
+              </div>
+              <div class="swot-item">
+                <div class="swot-dot"></div>
+                Operator mendapat pelatihan sebelum menggunakan sistem
+              </div>
+              <div class="swot-item">
+                <div class="swot-dot"></div>
+                Log aktivitas pengguna sudah tersedia sebagai dasar monitoring
+              </div>
+            </div>
+            <div class="swot-box weakness">
+              <div class="swot-title">⚠️ Kelemahan</div>
+              <div class="swot-item">
+                <div class="swot-dot"></div>
+                Tidak ada SOP formal dan incident log untuk penanganan gangguan
+              </div>
+              <div class="swot-item">
+                <div class="swot-dot"></div>
+                SIGAP hanya mencakup 4-5 layanan, masih tahap pengembangan
+              </div>
+              <div class="swot-item">
+                <div class="swot-dot"></div>
+                Human error input data: jenis kelamin tertukar, tanggal lahir
+                typo
+              </div>
+              <div class="swot-item">
+                <div class="swot-dot"></div>
+                Monitoring tidak real-time, tidak ada notifikasi otomatis
+              </div>
+              <div class="swot-item">
+                <div class="swot-dot"></div>
+                Tidak ada kebijakan keamanan informasi yang terdokumentasi
+                formal
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Domain ITIL V4 -->
+        <div class="card">
+          <div class="card-header">
+            <span class="card-icon">📌</span> Gambaran Umum Domain yang Diaudit
+            (ITIL V4)
+          </div>
+          <div class="table-wrapper">
+            <table>
+              <thead>
+                <tr>
+                  <th>Domain</th>
+                  <th>Fokus Audit</th>
+                  <th>Kondisi</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>Incident Management</strong></td>
+                  <td>Penanganan gangguan sistem, jaringan, akses SIAK</td>
+                  <td><span class="badge badge-moderate">Cukup Baik</span></td>
+                </tr>
+                <tr>
+                  <td><strong>Change Enablement</strong></td>
+                  <td>Pengelolaan perubahan SIGAP & update dari pusat</td>
+                  <td><span class="badge badge-moderate">Cukup Baik</span></td>
+                </tr>
+                <tr>
+                  <td><strong>Service Request Mgmt</strong></td>
+                  <td>Pengelolaan pelayanan administrasi kependudukan</td>
+                  <td><span class="badge badge-high">Kurang Baik</span></td>
+                </tr>
+                <tr>
+                  <td><strong>Info Security Mgmt</strong></td>
+                  <td>Keamanan data kependudukan & hak akses operator</td>
+                  <td><span class="badge badge-moderate">Cukup Baik</span></td>
+                </tr>
+                <tr>
+                  <td><strong>Monitoring & Event Mgmt</strong></td>
+                  <td>Pemantauan aktivitas dan gangguan layanan</td>
+                  <td><span class="badge badge-moderate">Cukup Baik</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ══ PAGE: RISK ANALYSIS ══ -->
+      <section class="page" id="page-risk">
+        <h1 class="page-title">Risk Analysis</h1>
+
+        <!-- Chart + Annex -->
+        <div class="grid-2" style="align-items: start">
+          <!-- Donut -->
+          <div class="card">
+            <div class="card-header">
+              <span class="card-icon">⚠️</span> Distribusi Level Risiko
+            </div>
+            <div class="chart-container">
+              <canvas id="riskChart"></canvas>
+            </div>
+            <div
+              style="
+                display: flex;
+                gap: 16px;
+                justify-content: center;
+                margin-top: 12px;
+                flex-wrap: wrap;
+                font-size: 12px;
+              "
+            >
+              <span style="display: flex; align-items: center; gap: 5px"
+                ><span
+                  style="
+                    width: 12px;
+                    height: 12px;
+                    border-radius: 50%;
+                    background: #c0392b;
+                    display: inline-block;
+                  "
+                ></span>
+                Critical (3)</span
+              >
+              <span style="display: flex; align-items: center; gap: 5px"
+                ><span
+                  style="
+                    width: 12px;
+                    height: 12px;
+                    border-radius: 50%;
+                    background: #e67e22;
+                    display: inline-block;
+                  "
+                ></span>
+                High (4)</span
+              >
+              <span style="display: flex; align-items: center; gap: 5px"
+                ><span
+                  style="
+                    width: 12px;
+                    height: 12px;
+                    border-radius: 50%;
+                    background: #f1c40f;
+                    display: inline-block;
+                  "
+                ></span>
+                Moderate (3)</span
+              >
+              <span style="display: flex; align-items: center; gap: 5px"
+                ><span
+                  style="
+                    width: 12px;
+                    height: 12px;
+                    border-radius: 50%;
+                    background: #27ae60;
+                    display: inline-block;
+                  "
+                ></span>
+                Low (0)</span
+              >
+            </div>
+          </div>
+
+          <!-- Kondisi Kontrol -->
+          <div class="card">
+            <div class="card-header">
+              <span class="card-icon">🛡️</span> Kondisi Kontrol Layanan TI
+            </div>
+            <div class="table-wrapper">
+              <table class="annex-table">
+                <thead>
+                  <tr>
+                    <th>Domain</th>
+                    <th>Kontrol</th>
+                    <th>Kondisi Aktual</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>Incident Mgmt</td>
+                    <td>SOP Insiden</td>
+                    <td>Tidak ada SOP tertulis, informal</td>
+                  </tr>
+                  <tr>
+                    <td>Change Mgmt</td>
+                    <td>Dokumentasi Perubahan</td>
+                    <td>Tidak ada dokumentasi formal</td>
+                  </tr>
+                  <tr>
+                    <td>Access Control</td>
+                    <td>Hak Akses Operator</td>
+                    <td>Ada SK Kepala Dinas — terbatas</td>
+                  </tr>
+                  <tr>
+                    <td>Backup Data</td>
+                    <td>Cadangan Data</td>
+                    <td>Backup dilakukan IT Pusat</td>
+                  </tr>
+                  <tr>
+                    <td>Monitoring</td>
+                    <td>Network Security</td>
+                    <td>Bergantung internet (Krusial)</td>
+                  </tr>
+                  <tr>
+                    <td>Business Cont.</td>
+                    <td>Continuity Plan</td>
+                    <td>Belum ada mekanisme saat POS gagal</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tabel Identifikasi Risiko Lengkap -->
+        <div class="card">
+          <div class="card-header">
+            <span class="card-icon">📋</span> Tabel Identifikasi Risiko Lengkap
+          </div>
+          <div class="table-wrapper">
+            <table>
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Aset</th>
+                  <th>Ancaman</th>
+                  <th>Kerentanan</th>
+                  <th>Impact</th>
+                  <th>Likelihood</th>
+                  <th>Level Risiko</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class="risk-id">R1</td>
+                  <td>Jaringan Internet</td>
+                  <td>Gangguan Jaringan</td>
+                  <td>Ketergantungan 1–2 provider</td>
+                  <td>High</td>
+                  <td>High</td>
+                  <td><span class="badge badge-critical">Critical</span></td>
+                </tr>
+                <tr>
+                  <td class="risk-id">R2</td>
+                  <td>Data Kependudukan</td>
+                  <td>Human Error Input</td>
+                  <td>Validasi sistem lemah</td>
+                  <td>High</td>
+                  <td>High</td>
+                  <td><span class="badge badge-critical">Critical</span></td>
+                </tr>
+                <tr>
+                  <td class="risk-id">R3</td>
+                  <td>Aplikasi SIGAP</td>
+                  <td>Sistem terbatas</td>
+                  <td>SIGAP masih tahap pengembangan</td>
+                  <td>Medium</td>
+                  <td>Medium</td>
+                  <td><span class="badge badge-moderate">Moderate</span></td>
+                </tr>
+                <tr>
+                  <td class="risk-id">R4</td>
+                  <td>Sistem SIAK</td>
+                  <td>Gangguan sistem pusat</td>
+                  <td>Database terpusat, kontrol daerah terbatas</td>
+                  <td>High</td>
+                  <td>Medium</td>
+                  <td><span class="badge badge-high">High</span></td>
+                </tr>
+                <tr>
+                  <td class="risk-id">R5</td>
+                  <td>Hak Akses Sistem</td>
+                  <td>Penyalahgunaan akses</td>
+                  <td>Tidak ada audit akses berkala</td>
+                  <td>High</td>
+                  <td>High</td>
+                  <td><span class="badge badge-critical">Critical</span></td>
+                </tr>
+                <tr>
+                  <td class="risk-id">R6</td>
+                  <td>Monitoring Sistem</td>
+                  <td>Keterlambatan deteksi</td>
+                  <td>Monitoring tidak real-time</td>
+                  <td>High</td>
+                  <td>Medium</td>
+                  <td><span class="badge badge-high">High</span></td>
+                </tr>
+                <tr>
+                  <td class="risk-id">R7</td>
+                  <td>Proses Layanan TI</td>
+                  <td>Tidak ada SOP</td>
+                  <td>Proses layanan belum terstandarisasi</td>
+                  <td>High</td>
+                  <td>Medium</td>
+                  <td><span class="badge badge-high">High</span></td>
+                </tr>
+                <tr>
+                  <td class="risk-id">R8</td>
+                  <td>Perubahan Sistem</td>
+                  <td>Error setelah update</td>
+                  <td>Tidak ada dokumentasi perubahan</td>
+                  <td>Medium</td>
+                  <td>Medium</td>
+                  <td><span class="badge badge-moderate">Moderate</span></td>
+                </tr>
+                <tr>
+                  <td class="risk-id">R9</td>
+                  <td>SDM Operator</td>
+                  <td>Ketergantungan operator</td>
+                  <td>Tidak semua pegawai punya akses</td>
+                  <td>Medium</td>
+                  <td>Medium</td>
+                  <td><span class="badge badge-moderate">Moderate</span></td>
+                </tr>
+                <tr>
+                  <td class="risk-id">R10</td>
+                  <td>Infrastruktur TI</td>
+                  <td>Ketergantungan sistem nasional</td>
+                  <td>Sistem tergantung pusat</td>
+                  <td>High</td>
+                  <td>Medium</td>
+                  <td><span class="badge badge-high">High</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Gap Analysis -->
+        <div class="card" style="margin-top: 24px">
+          <div class="card-header">
+            <span class="card-icon">🔍</span> Gap Analysis — Kondisi Aktual vs
+            Best Practice ITIL V4
+          </div>
+          <div class="table-wrapper">
+            <table>
+              <thead>
+                <tr>
+                  <th>Domain</th>
+                  <th>Kondisi Aktual</th>
+                  <th>Best Practice ITIL V4</th>
+                  <th>Gap</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>Incident Management</strong></td>
+                  <td>
+                    Penanganan berdasarkan pengalaman operator, tanpa pencatatan
+                  </td>
+                  <td>Prosedur terdokumentasi & incident log wajib</td>
+                  <td><span class="gap-badge">Tidak ada SOP & log</span></td>
+                </tr>
+                <tr>
+                  <td><strong>Change Enablement</strong></td>
+                  <td>Update berkala, tidak didokumentasikan formal</td>
+                  <td>Perubahan melalui risk analysis & evaluasi</td>
+                  <td><span class="gap-badge">Tidak ada change doc</span></td>
+                </tr>
+                <tr>
+                  <td><strong>Service Request Mgmt</strong></td>
+                  <td>
+                    Layanan via SIAK, belum ada sistem permintaan terstruktur
+                  </td>
+                  <td>Sistem pengelolaan permintaan + SLA</td>
+                  <td><span class="gap-badge">Tidak ada SLA</span></td>
+                </tr>
+                <tr>
+                  <td><strong>Info Security Mgmt</strong></td>
+                  <td>Akses dibatasi level pengguna via SK Dinas</td>
+                  <td>Kebijakan keamanan terdokumentasi & evaluasi berkala</td>
+                  <td>
+                    <span class="gap-badge">Tidak ada kebijakan formal</span>
+                  </td>
+                </tr>
+                <tr>
+                  <td><strong>Monitoring & Event Mgmt</strong></td>
+                  <td>Monitoring terbatas via log aktivitas pengguna</td>
+                  <td>Sistem monitoring terintegrasi & real-time</td>
+                  <td>
+                    <span class="gap-badge">Tidak ada real-time monitor</span>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ══ PAGE: REKOMENDASI ══ -->
+      <section class="page" id="page-rekomendasi">
+        <h1 class="page-title">Rekomendasi & Mitigasi Strategis</h1>
+
+        <div class="rekom-grid">
+          <div class="rekom-card critical">
+            <div class="rekom-id">R1 — CRITICAL</div>
+            <div class="rekom-masalah">Gangguan Jaringan Internet</div>
+            <div class="rekom-label">Rekomendasi</div>
+            <div class="rekom-text">
+              Multi ISP redundancy + monitoring real-time + SOP penanganan
+              gangguan jaringan
+            </div>
+          </div>
+          <div class="rekom-card critical">
+            <div class="rekom-id">R2 — CRITICAL</div>
+            <div class="rekom-masalah">Human Error Input Data</div>
+            <div class="rekom-label">Rekomendasi</div>
+            <div class="rekom-text">
+              Validasi otomatis (dropdown, auto-fill) + pelatihan operator
+              berkala + audit kualitas data
+            </div>
+          </div>
+          <div class="rekom-card critical">
+            <div class="rekom-id">R5 — CRITICAL</div>
+            <div class="rekom-masalah">Penyalahgunaan Hak Akses</div>
+            <div class="rekom-label">Rekomendasi</div>
+            <div class="rekom-text">
+              Implementasi Role-Based Access Control (RBAC) + audit akses
+              berkala + logging aktivitas
+            </div>
+          </div>
+          <div class="rekom-card high">
+            <div class="rekom-id">R4 — HIGH</div>
+            <div class="rekom-masalah">Ketergantungan Sistem Pusat</div>
+            <div class="rekom-label">Rekomendasi</div>
+            <div class="rekom-text">
+              Koordinasi dengan pusat + fallback manual + prosedur eskalasi
+              gangguan sistem nasional
+            </div>
+          </div>
+          <div class="rekom-card high">
+            <div class="rekom-id">R6 — HIGH</div>
+            <div class="rekom-masalah">Monitoring Tidak Real-Time</div>
+            <div class="rekom-label">Rekomendasi</div>
+            <div class="rekom-text">
+              Implementasi sistem monitoring terintegrasi + alert system
+              otomatis + dashboard monitoring
+            </div>
+          </div>
+          <div class="rekom-card high">
+            <div class="rekom-id">R7 — HIGH</div>
+            <div class="rekom-masalah">Tidak Ada SOP Layanan TI</div>
+            <div class="rekom-label">Rekomendasi</div>
+            <div class="rekom-text">
+              Penyusunan SOP seluruh proses layanan TI + penetapan SLA sebagai
+              standar waktu penyelesaian
+            </div>
+          </div>
+          <div class="rekom-card high">
+            <div class="rekom-id">R10 — HIGH</div>
+            <div class="rekom-masalah">
+              Ketergantungan Infrastruktur Nasional
+            </div>
+            <div class="rekom-label">Rekomendasi</div>
+            <div class="rekom-text">
+              SLA dengan penyedia layanan pusat + prosedur fallback operasional
+              daerah
+            </div>
+          </div>
+          <div class="rekom-card moderate">
+            <div class="rekom-id">R3 — MODERATE</div>
+            <div class="rekom-masalah">Keterbatasan Aplikasi SIGAP</div>
+            <div class="rekom-label">Rekomendasi</div>
+            <div class="rekom-text">
+              Percepatan pengembangan SIGAP + integrasi penuh dengan SIAK +
+              perluasan cakupan layanan
+            </div>
+          </div>
+        </div>
+
+        <!-- Traceability Matrix -->
+        <div class="card" style="margin-top: 28px">
+          <div class="card-header">
+            <span class="card-icon">🗺️</span> Traceability Matrix & Prioritas
+            Implementasi
+          </div>
+          <div class="table-wrapper">
+            <table>
+              <thead>
+                <tr>
+                  <th>Risk ID</th>
+                  <th>Finding</th>
+                  <th>Rekomendasi</th>
+                  <th>Tipe Kontrol</th>
+                  <th>Prioritas</th>
+                  <th>Waktu</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class="risk-id">R1</td>
+                  <td>Gangguan Jaringan</td>
+                  <td>Multi ISP + SOP Gangguan</td>
+                  <td>Preventive, Corrective</td>
+                  <td><span class="badge badge-critical">High</span></td>
+                  <td>0–3 bln</td>
+                </tr>
+                <tr>
+                  <td class="risk-id">R2</td>
+                  <td>Human Error Input</td>
+                  <td>Validasi otomatis + Pelatihan</td>
+                  <td>Preventive, Detective</td>
+                  <td><span class="badge badge-critical">High</span></td>
+                  <td>0–3 bln</td>
+                </tr>
+                <tr>
+                  <td class="risk-id">R4</td>
+                  <td>Gangguan Sistem Pusat</td>
+                  <td>Koordinasi + Fallback manual</td>
+                  <td>Preventive, Corrective</td>
+                  <td><span class="badge badge-high">High</span></td>
+                  <td>0–3 bln</td>
+                </tr>
+                <tr>
+                  <td class="risk-id">R5</td>
+                  <td>Akses tidak terkontrol</td>
+                  <td>RBAC + Audit akses</td>
+                  <td>Preventive, Detective</td>
+                  <td><span class="badge badge-critical">High</span></td>
+                  <td>0–3 bln</td>
+                </tr>
+                <tr>
+                  <td class="risk-id">R6</td>
+                  <td>Monitoring lambat</td>
+                  <td>Monitoring real-time + Alert</td>
+                  <td>Detective</td>
+                  <td><span class="badge badge-high">High</span></td>
+                  <td>0–3 bln</td>
+                </tr>
+                <tr>
+                  <td class="risk-id">R7</td>
+                  <td>Tidak ada SOP</td>
+                  <td>Penyusunan SOP & SLA</td>
+                  <td>Preventive</td>
+                  <td><span class="badge badge-high">High</span></td>
+                  <td>0–3 bln</td>
+                </tr>
+                <tr>
+                  <td class="risk-id">R3</td>
+                  <td>SIGAP terbatas</td>
+                  <td>Pengembangan fitur SIGAP</td>
+                  <td>Detective</td>
+                  <td><span class="badge badge-moderate">Medium</span></td>
+                  <td>3–6 bln</td>
+                </tr>
+                <tr>
+                  <td class="risk-id">R8</td>
+                  <td>Error setelah update</td>
+                  <td>Change management</td>
+                  <td>Preventive</td>
+                  <td><span class="badge badge-moderate">Medium</span></td>
+                  <td>3–6 bln</td>
+                </tr>
+                <tr>
+                  <td class="risk-id">R9</td>
+                  <td>Ketergantungan operator</td>
+                  <td>Pelatihan & distribusi akses</td>
+                  <td>Corrective</td>
+                  <td><span class="badge badge-moderate">Medium</span></td>
+                  <td>3–6 bln</td>
+                </tr>
+                <tr>
+                  <td class="risk-id">R10</td>
+                  <td>Ketergantungan nasional</td>
+                  <td>SLA + Prosedur fallback</td>
+                  <td>Corrective</td>
+                  <td><span class="badge badge-high">High</span></td>
+                  <td>0–3 bln</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ══ PAGE: OVERALL ASSESSMENT ══ -->
+      <section class="page" id="page-assessment">
+        <h1 class="page-title">Overall Assessment</h1>
+
+        <!-- Skala Penilaian -->
+        <div class="card" style="margin-bottom: 24px">
+          <div class="card-header">
+            <span class="card-icon">📊</span> Skala Penilaian Kematangan Layanan
+            TI (1–5)
+          </div>
+          <div
+            style="display: flex; gap: 12px; flex-wrap: wrap; margin-top: 8px"
+          >
+            <div
+              style="
+                background: #fef2f2;
+                border: 1px solid #fecaca;
+                border-radius: 8px;
+                padding: 10px 14px;
+                font-size: 12px;
+              "
+            >
+              <strong style="color: #c0392b">1</strong> — Proses tidak berjalan
+            </div>
+            <div
+              style="
+                background: #fff7ed;
+                border: 1px solid #fed7aa;
+                border-radius: 8px;
+                padding: 10px 14px;
+                font-size: 12px;
+              "
+            >
+              <strong style="color: #ea580c">2</strong> — Berjalan, tidak
+              terstruktur
+            </div>
+            <div
+              style="
+                background: #fffbeb;
+                border: 1px solid #fde68a;
+                border-radius: 8px;
+                padding: 10px 14px;
+                font-size: 12px;
+              "
+            >
+              <strong style="color: #d97706">3</strong> — Berjalan, belum
+              terdokumentasi
+            </div>
+            <div
+              style="
+                background: #f0fdf4;
+                border: 1px solid #bbf7d0;
+                border-radius: 8px;
+                padding: 10px 14px;
+                font-size: 12px;
+              "
+            >
+              <strong style="color: #16a34a">4</strong> — Terstruktur, sebagian
+              terdokumentasi
+            </div>
+            <div
+              style="
+                background: #eff6ff;
+                border: 1px solid #bfdbfe;
+                border-radius: 8px;
+                padding: 10px 14px;
+                font-size: 12px;
+              "
+            >
+              <strong style="color: #2563eb">5</strong> — Optimal, terukur,
+              terstandarisasi penuh
+            </div>
+          </div>
+        </div>
+
+        <!-- Score Cards -->
+        <div class="card" style="margin-bottom: 24px">
+          <div class="card-header">
+            <span class="card-icon">🎯</span> Penilaian Per Domain ITIL V4
+          </div>
+          <div class="score-grid">
+            <div class="score-item">
+              <div class="score-val s3">3/5</div>
+              <div class="score-domain">Incident Management</div>
+              <div class="progress-bar-wrap">
+                <div class="progress-bar pb-3"></div>
+              </div>
+            </div>
+            <div class="score-item">
+              <div class="score-val s3">3/5</div>
+              <div class="score-domain">Change Enablement</div>
+              <div class="progress-bar-wrap">
+                <div class="progress-bar pb-3"></div>
+              </div>
+            </div>
+            <div class="score-item">
+              <div class="score-val s2">2/5</div>
+              <div class="score-domain">Service Request Mgmt</div>
+              <div class="progress-bar-wrap">
+                <div class="progress-bar pb-2"></div>
+              </div>
+            </div>
+            <div class="score-item">
+              <div class="score-val s3">3/5</div>
+              <div class="score-domain">Info Security Mgmt</div>
+              <div class="progress-bar-wrap">
+                <div class="progress-bar pb-3"></div>
+              </div>
+            </div>
+            <div class="score-item">
+              <div class="score-val s3">3/5</div>
+              <div class="score-domain">Monitoring & Event Mgmt</div>
+              <div class="progress-bar-wrap">
+                <div class="progress-bar pb-3"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Assessment Detail Table -->
+        <div class="card" style="margin-bottom: 24px">
+          <div class="card-header">
+            <span class="card-icon">📋</span> Detail Assessment Berdasarkan
+            Domain ITIL V4
+          </div>
+          <div class="table-wrapper">
+            <table>
+              <thead>
+                <tr>
+                  <th>Domain ITIL V4</th>
+                  <th>Poin Assessment</th>
+                  <th>Penilaian</th>
+                  <th>Keterangan</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>Incident Management</strong></td>
+                  <td>
+                    Ada peningkatan dari 1 → 2 provider; penanganan langsung
+                    oleh operator; tidak ada pencatatan formal
+                  </td>
+                  <td>
+                    <span class="badge badge-moderate">Cukup Baik (3/5)</span>
+                  </td>
+                  <td>
+                    Penanganan responsif tapi tanpa SOP baku, klasifikasi
+                    insiden, maupun incident log
+                  </td>
+                </tr>
+                <tr>
+                  <td><strong>Change Enablement</strong></td>
+                  <td>
+                    Update berkala dari pusat & SIGAP; tidak ada dokumentasi
+                    perubahan; tidak ada risk analysis pre-change
+                  </td>
+                  <td>
+                    <span class="badge badge-moderate">Cukup Baik (3/5)</span>
+                  </td>
+                  <td>
+                    Perubahan rutin dilakukan namun belum ada change management
+                    terstruktur
+                  </td>
+                </tr>
+                <tr>
+                  <td><strong>Service Request Mgmt</strong></td>
+                  <td>
+                    Semua layanan utama via SIAK; SIGAP terbatas; permintaan
+                    tidak tercatat formal
+                  </td>
+                  <td>
+                    <span class="badge badge-high">Kurang Baik (2/5)</span>
+                  </td>
+                  <td>
+                    Operasional berjalan tapi tidak ada sistem pencatatan
+                    permintaan, SLA, atau monitoring
+                  </td>
+                </tr>
+                <tr>
+                  <td><strong>Info Security Mgmt</strong></td>
+                  <td>
+                    Hak akses via SK Kepala Dinas; human error masih terjadi;
+                    database dikelola pusat; ada pelatihan
+                  </td>
+                  <td>
+                    <span class="badge badge-moderate">Cukup Baik (3/5)</span>
+                  </td>
+                  <td>
+                    Kontrol dasar ada, tapi belum ada kebijakan keamanan formal
+                    dan validasi sistem kuat
+                  </td>
+                </tr>
+                <tr>
+                  <td><strong>Monitoring & Event Mgmt</strong></td>
+                  <td>
+                    Ada log aktivitas pengguna; monitoring belum real-time;
+                    tidak ada notifikasi otomatis
+                  </td>
+                  <td>
+                    <span class="badge badge-moderate">Cukup Baik (3/5)</span>
+                  </td>
+                  <td>
+                    Monitoring terbatas via log, belum terintegrasi — deteksi
+                    gangguan masih reaktif
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Hasil Wawancara -->
+        <div class="card">
+          <div class="card-header">
+            <span class="card-icon">🎤</span> Highlight Wawancara — Bapak Jolly
+            Tuwaidan (Narasumber)
+          </div>
+          <div
+            style="
+              display: grid;
+              grid-template-columns: 1fr 1fr;
+              gap: 14px;
+              margin-top: 8px;
+            "
+          >
+            <div
+              style="
+                background: #f8fafc;
+                border-radius: 10px;
+                padding: 16px;
+                border: 1px solid #e2e8f0;
+              "
+            >
+              <div
+                style="
+                  font-size: 10px;
+                  color: var(--text-muted);
+                  letter-spacing: 1px;
+                  text-transform: uppercase;
+                  margin-bottom: 6px;
+                "
+              >
+                Sistem yang Digunakan
+              </div>
+              <div style="font-size: 13px; color: #374151; line-height: 1.6">
+                "SIAK dari kantor pusat, sudah dari 2008. SIGAP dari Minahasa
+                Utara sendiri — aplikasi Android, baru akhir tahun lalu, masih
+                tahap pengembangan/uji coba."
+              </div>
+            </div>
+            <div
+              style="
+                background: #f8fafc;
+                border-radius: 10px;
+                padding: 16px;
+                border: 1px solid #e2e8f0;
+              "
+            >
+              <div
+                style="
+                  font-size: 10px;
+                  color: var(--text-muted);
+                  letter-spacing: 1px;
+                  text-transform: uppercase;
+                  margin-bottom: 6px;
+                "
+              >
+                Hak Akses
+              </div>
+              <div style="font-size: 13px; color: #374151; line-height: 1.6">
+                "Ada SK Kepala Dinas. Tidak semua pegawai bisa akses karena
+                menyangkut data pribadi. Ada tingkatan level — ada yang hanya
+                bisa Dukcapil, ada yang bisa semua."
+              </div>
+            </div>
+            <div
+              style="
+                background: #f8fafc;
+                border-radius: 10px;
+                padding: 16px;
+                border: 1px solid #e2e8f0;
+              "
+            >
+              <div
+                style="
+                  font-size: 10px;
+                  color: var(--text-muted);
+                  letter-spacing: 1px;
+                  text-transform: uppercase;
+                  margin-bottom: 6px;
+                "
+              >
+                Gangguan & Backup
+              </div>
+              <div style="font-size: 13px; color: #374151; line-height: 1.6">
+                "Pernah terjadi gangguan jaringan — dulu hanya 1 Telkom Fiber,
+                sekarang sudah 2 jaringan berbeda. Backup database di pusat, di
+                sini hanya agar data tidak bocor."
+              </div>
+            </div>
+            <div
+              style="
+                background: #f8fafc;
+                border-radius: 10px;
+                padding: 16px;
+                border: 1px solid #e2e8f0;
+              "
+            >
+              <div
+                style="
+                  font-size: 10px;
+                  color: var(--text-muted);
+                  letter-spacing: 1px;
+                  text-transform: uppercase;
+                  margin-bottom: 6px;
+                "
+              >
+                Human Error & Evaluasi
+              </div>
+              <div style="font-size: 13px; color: #374151; line-height: 1.6">
+                "Human error pasti ada — biasanya jenis kelamin tertukar,
+                tanggal lahir typo. Evaluasi ada, tapi karena sistemnya
+                nasional, evaluasinya saat Bintek dari pusat."
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <script>
+      // Navigation
+      function showPage(id, el) {
+        document
+          .querySelectorAll(".page")
+          .forEach((p) => p.classList.remove("active"));
+        document
+          .querySelectorAll(".nav-item")
+          .forEach((n) => n.classList.remove("active"));
+        document.getElementById("page-" + id).classList.add("active");
+        el.classList.add("active");
+
+        if (id === "risk") {
+          setTimeout(initChart, 100);
+        }
+      }
+
+      // Donut Chart
+      let chartInited = false;
+      function initChart() {
+        if (chartInited) return;
+        chartInited = true;
+        const ctx = document.getElementById("riskChart").getContext("2d");
+        new Chart(ctx, {
+          type: "doughnut",
+          data: {
+            labels: ["Critical", "High", "Moderate"],
+            datasets: [
+              {
+                data: [3, 4, 3],
+                backgroundColor: ["#c0392b", "#e67e22", "#f1c40f"],
+                borderWidth: 3,
+                borderColor: "#ffffff",
+                hoverBorderWidth: 0,
+              },
+            ],
+          },
+          options: {
+            cutout: "65%",
+            plugins: {
+              legend: { display: false },
+              tooltip: {
+                callbacks: {
+                  label: (ctx) => ` ${ctx.label}: ${ctx.raw} risiko`,
+                },
+              },
+            },
+            animation: { animateScale: true, duration: 900 },
+          },
+        });
+      }
+    </script>
+  </body>
+</html>
