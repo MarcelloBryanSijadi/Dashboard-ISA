@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Audit Sistem Informasi - Dukcapil Minut</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; background-color: #f8fafc; color: #1e293b; }
+        .card { background: white; border-radius: 16px; box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.05); border: 1px solid #e2e8f0; }
+        .status-badge { border-radius: 9999px; padding: 2px 10px; font-size: 12px; font-weight: 600; }
+        .bg-critical { background-color: #fee2e2; color: #dc2626; }
+        .bg-high { background-color: #ffedd5; color: #ea580c; }
+        .bg-moderate { background-color: #fef9c3; color: #ca8a04; }
+        .tab-active { border-bottom: 2px solid #3b82f6; color: #3b82f6; }
+    </style>
+</head>
+<body class="p-4 md:p-8">
+    <div class="max-w-7xl mx-auto">
+        <!-- Header Section -->
+        <header class="mb-10 flex flex-col md:flex-row md:items-end justify-between gap-6">
+            <div>
+                <div class="flex items-center gap-3 mb-2">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/12/Coat_of_arms_of_North_Minahasa_Regency.png/410px-Coat_of_arms_of_North_Minahasa_Regency.png" alt="Logo Minut" class="h-12">
+                    <h1 class="text-3xl font-extrabold tracking-tight">Executive Dashboard: Audit SI</h1>
+                </div>
+                <p class="text-slate-500 text-lg">Dinas Kependudukan dan Pencatatan Sipil Kab. Minahasa Utara</p>
+                <p class="text-sm text-slate-400 mt-1"><i class="far fa-calendar-alt mr-1"></i> Periode Audit: April 2026 | Berdasarkan Framework ITIL V4</p>
+            </div>
+            <div class="flex items-center gap-4">
+                <div class="text-right hidden md:block">
+                    <p class="text-sm font-bold">Narasumber Utama:</p>
+                    <p class="text-sm text-blue-600 font-semibold">Bapak Jolly Tuwaidan</p>
+                </div>
+                <div class="h-12 w-12 bg-blue-600 rounded-full flex items-center justify-center text-white font-bold text-xl">JT</div>
+            </div>
+        </header>
+
+        <!-- Stats Overview -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
+            <div class="card p-6 border-t-4 border-blue-500">
+                <div class="flex justify-between items-start">
+                    <div>
+                        <p class="text-slate-400 text-sm font-bold uppercase tracking-wider">Maturity Score</p>
+                        <p class="text-3xl font-bold mt-1">2.6 <span class="text-lg text-slate-300">/ 5.0</span></p>
+                    </div>
+                    <div class="p-3 bg-blue-50 rounded-xl text-blue-500"><i class="fas fa-chart-line fa-lg"></i></div>
+                </div>
+                <p class="text-xs text-yellow-600 mt-4 font-medium"><i class="fas fa-info-circle mr-1"></i> Level: Cukup Baik (Informal)</p>
+            </div>
+            <div class="card p-6 border-t-4 border-red-500">
+                <div class="flex justify-between items-start">
+                    <div>
+                        <p class="text-slate-400 text-sm font-bold uppercase tracking-wider">Risiko Kritis</p>
+                        <p class="text-3xl font-bold mt-1 text-red-600">High Impact</p>
+                    </div>
+                    <div class="p-3 bg-red-50 rounded-xl text-red-500"><i class="fas fa-exclamation-circle fa-lg"></i></div>
+                </div>
+                <p class="text-xs text-slate-500 mt-4">Fokus: Jaringan & Integrasi Pusat</p>
+            </div>
+            <div class="card p-6 border-t-4 border-emerald-500">
+                <div class="flex justify-between items-start">
+                    <div>
+                        <p class="text-slate-400 text-sm font-bold uppercase tracking-wider">Objek Audit</p>
+                        <p class="text-xl font-bold mt-1">SIAK & SIGAP</p>
+                    </div>
+                    <div class="p-3 bg-emerald-50 rounded-xl text-emerald-500"><i class="fas fa-database fa-lg"></i></div>
+                </div>
+                <p class="text-xs text-slate-500 mt-4">Sistem Terpusat & Aplikasi Lokal</p>
+            </div>
+            <div class="card p-6 border-t-4 border-purple-500">
+                <div class="flex justify-between items-start">
+                    <div>
+                        <p class="text-slate-400 text-sm font-bold uppercase tracking-wider">Progress</p>
+                        <p class="text-3xl font-bold mt-1">Audit Final</p>
+                    </div>
+                    <div class="p-3 bg-purple-50 rounded-xl text-purple-500"><i class="fas fa-check-double fa-lg"></i></div>
+                </div>
+                <p class="text-xs text-slate-500 mt-4">Siap untuk Implementasi Rekomendasi</p>
+            </div>
+        </div>
+
+        <!-- Main Visualizations -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-10">
+            <div class="card p-8">
+                <div class="flex items-center justify-between mb-6">
+                    <h3 class="text-lg font-bold text-slate-800"><i class="fas fa-shield-alt mr-2 text-blue-500"></i>Kematangan Domain ITIL V4</h3>
+                    <span class="text-xs bg-slate-100 px-2 py-1 rounded">Bab 6.1 Assessment</span>
+                </div>
+                <div class="h-[350px] relative">
+                    <canvas id="maturityChart"></canvas>
+                </div>
+                <div class="mt-6 grid grid-cols-2 gap-4 text-xs text-slate-500">
+                    <div class="flex items-center gap-2"><div class="w-3 h-3 bg-blue-500 rounded-sm"></div> Aktual (Audit 2026)</div>
+                    <div class="flex items-center gap-2 font-bold text-slate-800"><i class="fas fa-bullseye text-red-500"></i> Target: Level 4 (Baik)</div>
+                </div>
+            </div>
+            <div class="card p-8">
+                <div class="flex items-center justify-between mb-6">
+                    <h3 class="text-lg font-bold text-slate-800"><i class="fas fa-biohazard mr-2 text-red-500"></i>Profil Risiko Sistem (Table 4.6)</h3>
+                    <span class="text-xs bg-slate-100 px-2 py-1 rounded text-red-600 font-bold">Priority View</span>
+                </div>
+                <div class="h-[350px] relative">
+                    <canvas id="riskChart"></canvas>
+                </div>
+                <div class="mt-6 flex justify-around text-[10px] font-bold uppercase tracking-tighter">
+                    <span class="text-red-600">Kritis</span>
+                    <span class="text-orange-500">Tinggi</span>
+                    <span class="text-yellow-600">Sedang</span>
+                    <span class="text-blue-500">Rendah</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Gap Analysis & 4 Dimensions Row -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-10">
+            <!-- Gap Analysis Table -->
+            <div class="lg:col-span-2 card overflow-hidden">
+                <div class="p-6 bg-slate-50 border-b flex justify-between items-center">
+                    <h3 class="font-bold text-slate-800 uppercase text-sm tracking-widest">Analisis Kesenjangan (Gap Analysis)</h3>
+                    <span class="text-[10px] font-bold text-slate-400">TABLE 3.3</span>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-sm">
+                        <thead class="bg-slate-50 text-slate-500">
+                            <tr>
+                                <th class="px-6 py-3 text-left font-semibold">Domain Praktik</th>
+                                <th class="px-6 py-3 text-left font-semibold">Kondisi Aktual</th>
+                                <th class="px-6 py-3 text-left font-semibold">Kondisi Target</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y border-t">
+                            <tr>
+                                <td class="px-6 py-4 font-bold">Incident Management</td>
+                                <td class="px-6 py-4 text-slate-600">Informal, tanpa pencatatan terstruktur</td>
+                                <td class="px-6 py-4 text-blue-600 italic">Logging sistem terintegrasi (SOP & SLA)</td>
+                            </tr>
+                            <tr>
+                                <td class="px-6 py-4 font-bold">Change Enablement</td>
+                                <td class="px-6 py-4 text-slate-600">Dokumentasi analisis risiko minim</td>
+                                <td class="px-6 py-4 text-blue-600 italic">Dokumentasi & Approval formal pimpinan</td>
+                            </tr>
+                            <tr>
+                                <td class="px-6 py-4 font-bold">Information Security</td>
+                                <td class="px-6 py-4 text-slate-600">Belum ada kebijakan formal menyeluruh</td>
+                                <td class="px-6 py-4 text-blue-600 italic">Implementasi RBAC & Audit berkala</td>
+                            </tr>
+                            <tr>
+                                <td class="px-6 py-4 font-bold">Monitoring & Event</td>
+                                <td class="px-6 py-4 text-slate-600">Pemantauan manual pada status internet</td>
+                                <td class="px-6 py-4 text-blue-600 italic">Platform monitoring real-time & Alert</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- 4 Dimensions Insights -->
+            <div class="card p-6 bg-gradient-to-br from-blue-900 to-indigo-900 text-white">
+                <h3 class="text-lg font-bold mb-6 flex items-center justify-between border-b border-blue-800 pb-4">
+                    <span>4 Dimensi ITIL</span>
+                    <i class="fas fa-cubes"></i>
+                </h3>
+                <div class="space-y-6">
+                    <div class="flex gap-4">
+                        <div class="mt-1 h-6 w-6 flex-shrink-0 bg-blue-500 rounded flex items-center justify-center text-xs font-bold">1</div>
+                        <div>
+                            <p class="font-bold text-sm">Organisasi & Orang</p>
+                            <p class="text-xs text-blue-200 mt-1 italic">Butuh peningkatan kompetensi operator untuk meminimalisir human error.</p>
+                        </div>
+                    </div>
+                    <div class="flex gap-4">
+                        <div class="mt-1 h-6 w-6 flex-shrink-0 bg-blue-500 rounded flex items-center justify-center text-xs font-bold">2</div>
+                        <div>
+                            <p class="font-bold text-sm">Informasi & Teknologi</p>
+                            <p class="text-xs text-blue-200 mt-1 italic">SIAK terintegrasi pusat; aplikasi SIGAP butuh percepatan fitur.</p>
+                        </div>
+                    </div>
+                    <div class="flex gap-4">
+                        <div class="mt-1 h-6 w-6 flex-shrink-0 bg-blue-500 rounded flex items-center justify-center text-xs font-bold">3</div>
+                        <div>
+                            <p class="font-bold text-sm">Mitra & Pemasok</p>
+                            <p class="text-xs text-blue-200 mt-1 italic">Eskalasi ke Telkom Fiber & Pusat harus diperjelas (SLA).</p>
+                        </div>
+                    </div>
+                    <div class="flex gap-4">
+                        <div class="mt-1 h-6 w-6 flex-shrink-0 bg-blue-500 rounded flex items-center justify-center text-xs font-bold">4</div>
+                        <div>
+                            <p class="font-bold text-sm">Aliran Nilai & Proses</p>
+                            <p class="text-xs text-blue-200 mt-1 italic">Proses dari pendaftaran ke penerbitan butuh standarisasi SOP.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Detailed Recommendations & Timeline -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <!-- Traceability Matrix / Recommendations -->
+            <div class="lg:col-span-2 card overflow-hidden">
+                <div class="p-6 bg-white border-b flex justify-between items-center">
+                    <h3 class="font-bold text-slate-800 flex items-center gap-2">
+                        <i class="fas fa-list-check text-blue-600"></i> 
+                        Traceability Matrix & Rekomendasi
+                    </h3>
+                    <span class="text-xs font-semibold px-2 py-1 bg-blue-100 text-blue-700 rounded">Table 5.2</span>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-sm">
+                        <thead class="bg-slate-50 text-slate-500">
+                            <tr>
+                                <th class="px-6 py-3 text-left">Risiko / Akar Masalah</th>
+                                <th class="px-6 py-3 text-left">Rekomendasi Strategis</th>
+                                <th class="px-6 py-3 text-left">Kontrol</th>
+                                <th class="px-6 py-3 text-left">Prioritas</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y border-t">
+                            <tr>
+                                <td class="px-6 py-4">
+                                    <p class="font-bold">Gangguan Jaringan</p>
+                                    <p class="text-[10px] text-slate-400">Ketergantungan ISP Tunggal</p>
+                                </td>
+                                <td class="px-6 py-4 text-slate-600">Implementasi Multi ISP Redundancy & Redundant Fiber</td>
+                                <td class="px-6 py-4"><span class="status-badge bg-blue-100 text-blue-700">Preventive</span></td>
+                                <td class="px-6 py-4 font-bold text-red-600">Segera</td>
+                            </tr>
+                            <tr>
+                                <td class="px-6 py-4">
+                                    <p class="font-bold">Human Error (Input)</p>
+                                    <p class="text-[10px] text-slate-400">Validasi Sistem Lemah</p>
+                                </td>
+                                <td class="px-6 py-4 text-slate-600">Otomasi validasi (dropdown/auto-fill) & Audit kualitas data</td>
+                                <td class="px-6 py-4"><span class="status-badge bg-emerald-100 text-emerald-700">Detective</span></td>
+                                <td class="px-6 py-4 font-bold text-orange-600">0-3 Bln</td>
+                            </tr>
+                            <tr>
+                                <td class="px-6 py-4">
+                                    <p class="font-bold">Akses Tidak Sah</p>
+                                    <p class="text-[10px] text-slate-400">RBAC Belum Optimal</p>
+                                </td>
+                                <td class="px-6 py-4 text-slate-600">Implementasi Role-Based Access Control (RBAC) & Logging Aktif</td>
+                                <td class="px-6 py-4"><span class="status-badge bg-blue-100 text-blue-700">Preventive</span></td>
+                                <td class="px-6 py-4 font-bold text-orange-600">0-3 Bln</td>
+                            </tr>
+                            <tr>
+                                <td class="px-6 py-4">
+                                    <p class="font-bold">Incident Response</p>
+                                    <p class="text-[10px] text-slate-400">Tanpa SOP Formal</p>
+                                </td>
+                                <td class="px-6 py-4 text-slate-600">Penyusunan SOP Penanganan Insiden & Penetapan SLA</td>
+                                <td class="px-6 py-4"><span class="status-badge bg-purple-100 text-purple-700">Corrective</span></td>
+                                <td class="px-6 py-4 font-bold text-yellow-600">3-6 Bln</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Priority & Root Cause Sidebar -->
+            <div class="space-y-6">
+                <div class="card p-6 border-l-4 border-red-600">
+                    <h4 class="font-bold text-sm text-slate-800 uppercase mb-4 tracking-tighter">Business Impact (Dampak Bisnis)</h4>
+                    <div class="space-y-4">
+                        <div class="flex items-start gap-3">
+                            <i class="fas fa-wifi text-red-500 mt-1"></i>
+                            <p class="text-xs font-medium text-slate-600">Gangguan jaringan mengakibatkan <span class="text-red-600 font-bold underline">terhentinya pelayanan publik secara total</span>.</p>
+                        </div>
+                        <div class="flex items-start gap-3">
+                            <i class="fas fa-file-invoice text-orange-500 mt-1"></i>
+                            <p class="text-xs font-medium text-slate-600">Kesalahan data kependudukan berdampak pada <span class="font-bold">validitas identitas nasional</span>.</p>
+                        </div>
+                        <div class="flex items-start gap-3">
+                            <i class="fas fa-clock text-yellow-600 mt-1"></i>
+                            <p class="text-xs font-medium text-slate-600">Absensi monitoring memperlambat <span class="font-bold">waktu tanggap (response time)</span> gangguan.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card p-6">
+                    <h4 class="font-bold text-sm text-slate-800 uppercase mb-4 tracking-tighter">Interview Insight</h4>
+                    <div class="p-4 bg-slate-50 rounded-lg border-l-4 border-blue-500 italic text-xs text-slate-600">
+                        "Sistem SIAK sudah mendukung, namun ketergantungan pada pusat dan jaringan lokal seringkali menghambat proses pencetakan dokumen kependudukan."
+                        <p class="mt-2 font-bold text-slate-800 not-italic text-[10px]">— Jolly Tuwaidan, Kabid PIAK</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer class="mt-16 pt-8 border-t border-slate-200 text-center pb-8">
+            <p class="text-slate-400 text-xs">Sistem Informasi Audit - Dinas Dukcapil Minahasa Utara © 2026</p>
+            <p class="text-slate-300 text-[10px] mt-2">Dibuat menggunakan standard pelaporan ITIL V4 Foundation Edition</p>
+        </footer>
+    </div>
+
+    <script>
+        // Chart configuration
+        const fontConfig = { family: 'Inter', size: 12 };
+
+        // Maturity Chart (Radar)
+        const ctxMaturity = document.getElementById('maturityChart').getContext('2d');
+        new Chart(ctxMaturity, {
+            type: 'radar',
+            data: {
+                labels: ['Incident Mgmt', 'Change Enablement', 'Service Request', 'Security Mgmt', 'Monitoring'],
+                datasets: [
+                    {
+                        label: 'Aktual (Current)',
+                        data: [3, 2, 3, 3, 2],
+                        backgroundColor: 'rgba(59, 130, 246, 0.2)',
+                        borderColor: '#3b82f6',
+                        borderWidth: 3,
+                        pointBackgroundColor: '#3b82f6'
+                    },
+                    {
+                        label: 'Target (Best Practice)',
+                        data: [4, 4, 4, 5, 4],
+                        backgroundColor: 'rgba(239, 68, 68, 0.05)',
+                        borderColor: '#ef4444',
+                        borderDash: [5, 5],
+                        borderWidth: 2,
+                        pointBackgroundColor: '#ef4444'
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    r: {
+                        angleLines: { color: '#e2e8f0' },
+                        grid: { color: '#f1f5f9' },
+                        suggestedMin: 0,
+                        suggestedMax: 5,
+                        ticks: { stepSize: 1, backdropColor: 'transparent', font: fontConfig }
+                    }
+                },
+                plugins: {
+                    legend: { display: true, position: 'bottom', labels: { font: fontConfig } }
+                }
+            }
+        });
+
+        // Risk Chart (Bar)
+        const ctxRisk = document.getElementById('riskChart').getContext('2d');
+        new Chart(ctxRisk, {
+            type: 'bar',
+            data: {
+                labels: ['Jaringan/ISP', 'Data Penduduk', 'Sistem SIAK', 'Hak Akses', 'Sistem Pusat', 'Monitoring', 'Proses TI'],
+                datasets: [{
+                    label: 'Tingkat Risiko',
+                    data: [4, 3, 3, 3, 3, 2, 2],
+                    backgroundColor: [
+                        '#dc2626', '#f97316', '#f97316', '#f97316', '#f97316', '#ca8a04', '#ca8a04'
+                    ],
+                    borderRadius: 8
+                }]
+            },
+            options: {
+                indexAxis: 'y',
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    x: {
+                        beginAtZero: true,
+                        max: 4,
+                        grid: { display: false },
+                        ticks: {
+                            callback: function(v) { return ['', 'Rendah', 'Sedang', 'Tinggi', 'Kritis'][v] },
+                            font: fontConfig
+                        }
+                    },
+                    y: { grid: { display: false }, ticks: { font: fontConfig } }
+                },
+                plugins: {
+                    legend: { display: false }
+                }
+            }
+        });
+    </script>
+</body>
+</html>
